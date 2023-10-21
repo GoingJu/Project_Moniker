@@ -15,13 +15,12 @@ Example of registry information:
       "principal.product_name" = f1.m3.r2.udm.33
   
   Output Breakdown: 
-      
-      principal.product_name:   Is the recorded string.
-      f1:   Located within first 'filter' index
-      m3:   Is the 3rd occurrence of mutate index.
-      r1/r2:   Is the 2nd occurrence of rename index, within the 3rd mutate index.
-      udm:  Is a udm field
-      32/33:   Was found on the 31st line of the file
+
+       f1:   Located within first 'filter' index
+       m3:   Is the 3rd occurrence of mutate index.
+    r1/r2:   Is the 2nd occurrence of rename index, within the 3rd mutate index.
+      udm:   Is a udm field
+    32/33:   Was found on the 31st line of the file
   
   Any string that is found inside of double quotes, and does not contain a value found
   in the keyword_mapping or udm_keywords arrays will be considered a variable. 
@@ -35,14 +34,13 @@ Example of registry information:
   
   Explanation is that: 
   
-      test:  Is the recorded string .
       f1:    Within first found filter index.
       m2:    Is the second occurrence of mutate index in the file.
       r1:    Is the first occurrence of rename within the 2nd mutate index.
       v1:    Is the 1st reported variable found in the file.
       5:     Was found on the 5th line of the file
-  
 
+  
 Change History:
   ~ 20231021 - project_moniker_0.1.py moved to archive. Currently working on tracking nest
     counts correctly
