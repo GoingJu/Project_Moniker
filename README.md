@@ -16,7 +16,7 @@ Example of registry information:
   
   Output Breakdown: 
       
-      principal.product_name: Is the recorded string with 
+      principal.product_name:   Is the recorded string.
       f1:   Located within first 'filter' index
       m3:   Is the 3rd occurrence of mutate index.
       r1:   Is the 2nd occurrence of rename index, within the 3rd mutate index.
