@@ -19,9 +19,9 @@ Example of registry information:
       principal.product_name:   Is the recorded string.
       f1:   Located within first 'filter' index
       m3:   Is the 3rd occurrence of mutate index.
-      r1:   Is the 2nd occurrence of rename index, within the 3rd mutate index.
+      r1/r2:   Is the 2nd occurrence of rename index, within the 3rd mutate index.
       udm:  Is a udm field
-      31:   Was found on the 31st line of the file
+      32/33:   Was found on the 31st line of the file
   
   Any string that is found inside of double quotes, and does not contain a value found
   in the keyword_mapping or udm_keywords arrays will be considered a variable. 
