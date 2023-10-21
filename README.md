@@ -22,11 +22,11 @@ Example of registry information:
       r1:   Is the 2nd occurrence of rename index, within the 3rd mutate index.
       udm:  Is a udm field
       31:   Was found on the 31st line of the file
-
+  
   Any string that is found inside of double quotes, and does not contain a value found
-  in the keyword_mapping array will be considered a variable. 
+  in the keyword_mapping or udm_keywords arrays will be considered a variable. 
   For example the string contained on line 4:
-              
+  
       "test" => ""
   
   Would provide an output as:
@@ -41,7 +41,7 @@ Example of registry information:
       r1:    Is the first occurrence of rename within the 2nd mutate index.
       v1:    Is the 1st reported variable found in the file.
       5:     Was found on the 5th line of the file
-
+  
 
 Change History:
-  project_moniker_0.1 moved to archive. Currently working on tracking nest counts     correctly
+  ~ 20231021 - project_moniker_0.1.py moved to archive. Currently working on tracking nest counts correctly
