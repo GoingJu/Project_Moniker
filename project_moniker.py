@@ -20,7 +20,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
         if block_start_match:
             keyword = block_start_match.group(1)
             context_stack.append(get_variable_context(keyword, context_stack))
-            if keyword != 'if':
+            if keyword != keyword_mapping:
                 nesting_level[0] += 1
         elif block_end_match:
             if context_stack:
