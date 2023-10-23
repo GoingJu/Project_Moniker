@@ -114,7 +114,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
         "useragent": "ua",
         "statedump": "sd",
         "merge": "mr",
-        "v": "v",
+        "v": "v"
     }
     udm_keywords = ["principal", "intermediary", "observer", "target", "src", "network", "security_result", "metadata"]
 
