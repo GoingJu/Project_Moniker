@@ -49,9 +49,12 @@ Example of registry information:
 Change History:
 
   ~ 20231023 - Updated project_moniker.py. Currently retaining the f1. variable in the output, but more work needs done.
+
+    Notes: Still need to address tracking of indexes after filter, need to change UDM tag from 'v' to 'udm', and need include a check to catch multiple fields per line.
   
   ~ 20231021 - project_moniker_0.1.py moved to archive. Currently working on tracking nest
     counts correctly
+    
     Notes: 
       Consider tracking curly brackets seperately for index counts?
       Correct mapping of udm tag output
