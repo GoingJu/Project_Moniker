@@ -10,7 +10,8 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
 
     def process_line(line, udm_keywords, context_stack):
         line = line.strip()
-        if not line:
+
+        if line.startswith('#') or not line:
             return
 
         # Check if the line contains a block start or end
@@ -67,11 +68,14 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
     variable_count = {
         'filter': 0,  # Initialize variable_count with all possible keywords
         'mutate': 0,
+        'array_function': 0,
         'replace': 0,
         'rename': 0,
         'json': 0,
         'on_error': 0,
         'kv': 0,
+        'else': 0,
+        'grok': 0,
         'label': 0,
         'drop': 0,
         'if': 0,
@@ -92,13 +96,16 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
 
     # Define a mapping for keywords and a list of UDM keywords.
     keyword_mapping = {
+        "array_function": "af",
         "filter": "f",
         "mutate": "m",
         "replace": "r",
         "rename": "rn",
         "json": "j",
+        "grok": "gr",
         "on_error": "err",
         "kv": "kv",
+        "else": "el",
         "label": "l",
         "drop": "dr",
         "if": "c",
@@ -109,7 +116,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
         "merge": "mr",
         "v": "v",
     }
-    udm_keywords = ["principal", "intermediary", "observer", "target", "src", "network", "security_result"]
+    udm_keywords = ["principal", "intermediary", "observer", "target", "src", "network", "security_result", "metadata"]
 
     # Process each line in the configuration file.
     for line_number, line in enumerate(lines, start=1):
