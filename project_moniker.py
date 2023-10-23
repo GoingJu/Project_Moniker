@@ -6,7 +6,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
     def get_variable_context(keyword, context_stack):
         if context_stack:
             return f'{context_stack[-1]}.{keyword}{variable_count[keyword]}'
-        return f'{keyword}{variable_count[keyword]}'
+        return f'f1.{keyword}{variable_count[keyword]}'
 
     def process_line(line, udm_keywords, context_stack):
         line = line.strip()
@@ -80,14 +80,15 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
         'useragent': 0,
         'statedump': 0,
         'merge': 0,
-        'v': 0  # 'v' keyword for variables
+        'v': 0 
     }
+    
     output_lines = []
     variable_output_lines = []
     udm_fields = []
 
     context_stack = []
-    nesting_level = [0]
+    nesting_level = [1]
 
     # Define a mapping for keywords and a list of UDM keywords.
     keyword_mapping = {
@@ -106,6 +107,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
         "useragent": "ua",
         "statedump": "sd",
         "merge": "mr",
+        "v": "v",
     }
     udm_keywords = ["principal", "intermediary", "observer", "target", "src", "network", "security_result"]
 
@@ -142,7 +144,6 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
 
     # Print the results.
     print('\n'.join(variable_output_lines + udm_fields + output_lines))
-
 
 if __name__ == "__main__":
     # Set up command-line argument parsing.
