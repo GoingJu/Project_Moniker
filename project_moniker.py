@@ -22,6 +22,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
             context_stack.append(get_variable_context(keyword, context_stack))
             if keyword != keyword_mapping:
                 nesting_level[0] += 1
+                variable_count[keyword] += 1 
         elif block_end_match:
             if context_stack:
                 context_stack.pop()
@@ -95,6 +96,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
     nesting_level = [1]
 
     # Define a mapping for keywords and a list of UDM keywords.
+    
     keyword_mapping = {
         "array_function": "af",
         "filter": "f",
