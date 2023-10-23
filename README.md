@@ -42,6 +42,7 @@ Example of registry information:
 
   
 Change History:
+  ~ 20231023 - Updated project_moniker.py. Currently retaining the f1. variable in the output, but more work needs done.
   ~ 20231021 - project_moniker_0.1.py moved to archive. Currently working on tracking nest
     counts correctly
     Notes: 
