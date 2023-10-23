@@ -54,6 +54,7 @@ Change History:
       Still need to address tracking of indexes after filter, 
       Need to change UDM tag from 'v' to 'udm', 
       Need include a check to catch multiple fields per line.
+      Need to trip prefix to UDM fields from output
   
   ~ 20231021 - project_moniker_0.1.py moved to archive. Currently working on tracking nest
     counts correctly
