@@ -1,7 +1,7 @@
 # project_moniker
 2023 Telemetry Engineering Code-A-Thon Submission
 
-Project Moniker is intended to be a python application that will parse each line in our logstash configuration files and map values contained within a registry number. The registry number format will follow the indexes of the configuration files so that it provides clarity at a glance, and informatinve information on how a configuration file is structured. The intent of this data will be to use it for scanning and modifying our current repository of configuration files and may also be used as an adjuct tool for parser development.
+Project Moniker is intended to be a python application that will parse each line in our logstash configuration files and map values contained within a registry number. The registry number format will follow the indexes of the configuration files so that it provides clarity at a glance, and information on how a configuration file is structured. The intent of this data will be to use it for scanning and modifying our current repository of configuration files and may also be used as an adjuct tool for parser development.
 
 Example of registry information:
   The sample provided below is found in "archive/sample_parser.conf"; lines 31 and 32:
