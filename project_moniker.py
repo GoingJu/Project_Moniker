@@ -1,7 +1,7 @@
 import re
 import argparse
 
-# Define a function to parse a Logstash configuration file.
+# Defines function to parse a Google Chronicle parser configuration file.
 def parse_logstash_config(file_location, output_structure=0, debug_enabled=True):
     # Initialize variables to store parsing results.
     variable_labels = {}
