@@ -3,26 +3,114 @@ import argparse
 
 # Define a function to parse a Logstash configuration file.
 def parse_logstash_config(file_location, output_structure=0, debug_enabled=True):
-    def get_variable_context(keyword, context_stack):
+    # Initialize variables to store parsing results.
+    variable_labels = {}
+    variable_count = {
+        # Initialize variable_count with all possible keywords
+        'filter': 0,  
+        'mutate': 0,
+        'array_function': 0,
+        'replace': 0,
+        'rename': 0,
+        'json': 0,
+        'on_error': 0,
+        'kv': 0,
+        'else': 0,
+        'grok': 0,
+        'label': 0,
+        'drop': 0,
+        'if': 0,
+        'date': 0,
+        'csv': 0,
+        'useragent': 0,
+        'statedump': 0,
+        'merge': 0,
+        'match': 0,
+        'convert': 0,
+        'overwrite': 0,
+        'rebase': 0,
+        'lowercase': 0,
+        'v': 0
+    }
+    # Define a mapping for keywords and a list of UDM keywords.
+    keyword_mapping = {
+        "array_function": "af",
+        "filter": "f",
+        "mutate": "mu",
+        "replace": "r",
+        "rename": "rn",
+        "json": "j",
+        "grok": "gr",
+        "on_error": "err",
+        "kv": "kv",
+        "else": "el",
+        "label": "l",
+        "drop": "dr",
+        "if": "c",
+        "date": "dt",
+        "csv": "csv",
+        "useragent": "ua",
+        "statedump": "sd",
+        "merge": "mr",
+        "match": "ma",
+        "convert": "cv",
+        "overwrite": "ow",
+        "rebase": "rb",
+        "lowercase": "lwc",
+        "v": "v"
+    }
+    udm_keywords = ["principal", "intermediary", "observer", "target", "src", "network", "security_result", "metadata"]
+
+    output_lines = []
+    variable_output_lines = []
+    udm_fields = []
+    context_stack = []
+    nesting_level = [1]
+
+    # Open and read the Logstash configuration file.
+    with open(file_location, 'r') as file:
+        lines = file.readlines()
+
+    def get_variable_context(keyword, context_stack): #lines 34, 
         if context_stack:
             return f'{context_stack[-1]}.{keyword}{variable_count[keyword]}'
         return f'f1.{keyword}{variable_count[keyword]}'
 
+
     def process_line(line, udm_keywords, context_stack):
         line = line.strip()
-
         if line.startswith('#') or not line:
             return
-
+        
         # Check if the line contains a block start or end
-        block_start_match = re.match(r'^\s*(\w+)\s*\{', line)
-        block_end_match = re.match(r'^\s*\}', line)
+        block_start_match = re.match(r'^\s*(\w+)([A-Za-z]+)*\s*', line)
+        if block_start_match == "None":
+            block_start_match = re.match(r'^\s*([A-Za-z]+)\s=>\s\{', line)
+
+        block_end_match = re.match(r'^\s*\}', line)  
+        
+        # Debugging prints#############################################################################################
+        # This information is present at the very begining of the output and provides the pass/fail status (for the above regex values) for each line.
+        
+        #print(f"block_end_match: '{block_end_match}'")
+        print(f"Processing line: '{line}'")
+        if block_start_match:
+            print(f"Block start matched: {block_start_match.groups()}")
+        else:
+            print("Block start not matched")
+
+        if block_end_match:
+            print(f"Block end matched: {block_end_match.groups()}")
+        else:
+            print("Block end not matched")
+        ################################################################################################################
+        
         if block_start_match:
             keyword = block_start_match.group(1)
             context_stack.append(get_variable_context(keyword, context_stack))
             if keyword != keyword_mapping:
                 nesting_level[0] += 1
-                variable_count[keyword] += 1 
+                variable_count[keyword] += 1
         elif block_end_match:
             if context_stack:
                 context_stack.pop()
@@ -33,7 +121,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
         if keyword_match:
             keyword = keyword_match.group(1).strip('"')
             original_keyword = keyword
-            keyword = keyword_mapping.get(keyword, 'v')
+            keyword = keyword_mapping.get(keyword)
 
             if keyword not in variable_count:
                 variable_count[keyword] = 1
@@ -59,67 +147,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
                     variable_output_lines.append(output_line)
                 else:
                     output_lines.append(output_line)
-
-    # Open and read the Logstash configuration file.
-    with open(file_location, 'r') as file:
-        lines = file.readlines()
-
-    # Initialize variables to store parsing results.
-    variable_labels = {}
-    variable_count = {
-        'filter': 0,  # Initialize variable_count with all possible keywords
-        'mutate': 0,
-        'array_function': 0,
-        'replace': 0,
-        'rename': 0,
-        'json': 0,
-        'on_error': 0,
-        'kv': 0,
-        'else': 0,
-        'grok': 0,
-        'label': 0,
-        'drop': 0,
-        'if': 0,
-        'date': 0,
-        'csv': 0,
-        'useragent': 0,
-        'statedump': 0,
-        'merge': 0,
-        'v': 0 
-    }
     
-    output_lines = []
-    variable_output_lines = []
-    udm_fields = []
-
-    context_stack = []
-    nesting_level = [1]
-
-    # Define a mapping for keywords and a list of UDM keywords.
-    
-    keyword_mapping = {
-        "array_function": "af",
-        "filter": "f",
-        "mutate": "m",
-        "replace": "r",
-        "rename": "rn",
-        "json": "j",
-        "grok": "gr",
-        "on_error": "err",
-        "kv": "kv",
-        "else": "el",
-        "label": "l",
-        "drop": "dr",
-        "if": "c",
-        "date": "dt",
-        "csv": "csv",
-        "useragent": "ua",
-        "statedump": "sd",
-        "merge": "mr",
-        "v": "v"
-    }
-    udm_keywords = ["principal", "intermediary", "observer", "target", "src", "network", "security_result", "metadata"]
-
     # Process each line in the configuration file.
     for line_number, line in enumerate(lines, start=1):
         process_line(line, udm_keywords, context_stack)
