@@ -40,13 +40,21 @@ Example of registry information:
       v1:    Is the 1st reported variable found in the file.
       5:     Was found on the 5th line of the file
 
-      
-
   Output of current version:
   
       "test" = f1.mutate0.v2.5
       
 Change History:
+
+~ 20240603 - Major updates underway
+    Notes:
+      Restructuring of the codebase has been underway for a few days. Approximately 45% complete.
+
+    Notes: 
+      Still need to address tracking of indexes after filter, 
+      Need to change UDM tag from 'v' to 'udm', 
+      Need include a check to catch multiple fields per line.
+      Need to trip prefix to UDM fields from output
 
   ~ 20231023 - Updated project_moniker.py. Currently retaining the f1. variable in the output, but more work needs done.
 
