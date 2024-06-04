@@ -47,14 +47,9 @@ Example of registry information:
 Change History:
 
 ~ 20240603 - Major updates underway
-    Notes:
-      Restructuring of the codebase has been underway for a few days. Approximately 45% complete.
 
     Notes: 
-      Still need to address tracking of indexes after filter, 
-      Need to change UDM tag from 'v' to 'udm', 
-      Need include a check to catch multiple fields per line.
-      Need to trip prefix to UDM fields from output
+      Restructuring of the codebase has been underway for a few days. Approximately 45% complete. 
 
   ~ 20231023 - Updated project_moniker.py. Currently retaining the f1. variable in the output, but more work needs done.
 
