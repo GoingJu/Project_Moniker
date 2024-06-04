@@ -1,39 +1,320 @@
-(venv) justin.goings@FTG10500 venv % python3 project_moniker.py /Users/justin.goings/Applications/project_moniker/archive/conf_sample.conf -O 0
+Processing line: 'filter {'
+Block start matched: ('filter', None)
+Block end not matched
+Processing line: 'mutate {'
+Block start matched: ('mutate', None)
+Block end not matched
+Processing line: 'replace => {'
+Block start matched: ('replace', None)
+Block end not matched
+Processing line: '"WHEN" => ""'
+Block start not matched
+Block end not matched
+Processing line: '"SRCLOG" => ""'
+Block start not matched
+Block end not matched
+Processing line: '"TIPOLOG" => ""'
+Block start not matched
+Block end not matched
+Processing line: '"USERNAME" => ""'
+Block start not matched
+Block end not matched
+Processing line: '"SRCLOGIP" => ""'
+Block start not matched
+Block end not matched
+Processing line: '"COMPUTERNAME" => ""'
+Block start not matched
+Block end not matched
+Processing line: '"APPLICATION" => ""'
+Block start not matched
+Block end not matched
+Processing line: '"CATEGORY" => ""'
+Block start not matched
+Block end not matched
+Processing line: '"CONTENT" => ""'
+Block start not matched
+Block end not matched
+Processing line: '"CONNTYPE" => ""'
+Block start not matched
+Block end not matched
+Processing line: '"RESOURCE" => ""'
+Block start not matched
+Block end not matched
+Processing line: '"ACTION" => ""'
+Block start not matched
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: 'grok {'
+Block start matched: ('grok', None)
+Block end not matched
+Processing line: 'match => {'
+Block start matched: ('match', None)
+Block end not matched
+Processing line: '"message" => ["(<\d+>)?%{SYSLOGTIMESTAMP:WHEN} %{SYSLOGHOST:SRCLOG} %{DATA}: %{GREEDYDATA:TIPOLOG} log: Users: %{GREEDYDATA:USERNAME}, Source IP: %{GREEDYDATA:SRCLOGIP}, Computer name: %{GREEDYDATA:COMPUTERNAME}, Application: %{GREEDYDATA:APPLICATION}, Category: %{DATA:CATEGORY}, Content: %{GREEDYDATA:CONTENT}"'
+Block start not matched
+Block end not matched
+Processing line: '"(<\d+>)?%{SYSLOGTIMESTAMP:WHEN} %{SYSLOGHOST:SRCLOG} %{DATA}: %{GREEDYDATA:TIPOLOG} log: Users: %{USERNAME:USERNAME}, Source IP: %{GREEDYDATA:SRCLOGIP}, Computer name: %{GREEDYDATA:COMPUTERNAME}, Connection type: %{DATA:CONNTYPE}, Accessed resources: %{DATA:RESOURCE}, Action: %{GREEDYDATA:ACTION}"]'
+Block start not matched
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: 'overwrite => ["WHEN","SRCLOG","TIPOLOG","USERNAME","SRCLOGIP","COMPUTERNAME","APPLICATION","CATEGORY","CONTENT","CONNTYPE","RESOURCE","ACTION"]'
+Block start matched: ('overwrite', None)
+Block end not matched
+Processing line: 'on_error => "not_valid_log"'
+Block start matched: ('on_error', None)
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: 'if [WHEN] != "" {'
+Block start matched: ('if', None)
+Block end not matched
+Processing line: 'date {'
+Block start matched: ('date', None)
+Block end not matched
+Processing line: 'match => [ "WHEN", "MMM dd HH:mm:ss", "MMM d HH:mm:ss"]'
+Block start matched: ('match', None)
+Block end not matched
+Processing line: 'rebase => true'
+Block start matched: ('rebase', None)
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: 'mutate {'
+Block start matched: ('mutate', None)
+Block end not matched
+Processing line: 'rename => {'
+Block start matched: ('rename', None)
+Block end not matched
+Processing line: '"WHEN" => "timestamp"'
+Block start not matched
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: 'on_error => "timestamp_error"'
+Block start matched: ('on_error', None)
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: 'if [USERNAME] not in [ "-" ,"" ] {'
+Block start matched: ('if', None)
+Block end not matched
+Processing line: 'mutate {'
+Block start matched: ('mutate', None)
+Block end not matched
+Processing line: 'lowercase => ["USERNAME"]'
+Block start matched: ('lowercase', None)
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: 'mutate {'
+Block start matched: ('mutate', None)
+Block end not matched
+Processing line: 'replace => {'
+Block start matched: ('replace', None)
+Block end not matched
+Processing line: '"event.idm.read_only_udm.principal.user.userid" => "%{USERNAME}"'
+Block start not matched
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: 'on_error => "Username_error"'
+Block start matched: ('on_error', None)
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: 'mutate {'
+Block start matched: ('mutate', None)
+Block end not matched
+Processing line: 'replace => {'
+Block start matched: ('replace', None)
+Block end not matched
+Processing line: '"src_ip_temp" => "%{SRCLOGIP}"'
+Block start not matched
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: 'convert => {'
+Block start matched: ('convert', None)
+Block end not matched
+Processing line: '"src_ip_temp" => "ipaddress"'
+Block start not matched
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: 'on_error => "not_a_src_ip"'
+Block start matched: ('on_error', None)
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: 'if ![not_a_src_ip] {'
+Block start matched: ('if', None)
+Block end not matched
+Processing line: 'mutate {'
+Block start matched: ('mutate', None)
+Block end not matched
+Processing line: 'merge => {'
+Block start matched: ('merge', None)
+Block end not matched
+Processing line: '"event.idm.read_only_udm.principal.ip" => "SRCLOGIP"'
+Block start not matched
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: 'mutate {'
+Block start matched: ('mutate', None)
+Block end not matched
+Processing line: 'replace => {'
+Block start matched: ('replace', None)
+Block end not matched
+Processing line: '"event.idm.read_only_udm.metadata.product_name" => "QNAP Nas"'
+Block start not matched
+Block end not matched
+Processing line: '"event.idm.read_only_udm.metadata.vendor_name" => "QNAP"'
+Block start not matched
+Block end not matched
+Processing line: '"event.idm.read_only_udm.target.hostname" => "%{SRCLOG}"'
+Block start not matched
+Block end not matched
+Processing line: '"event.idm.read_only_udm.target.application" => "%{APPLICATION}"'
+Block start not matched
+Block end not matched
+Processing line: '"event.idm.read_only_udm.target.file.full_path" => "%{RESOURCE}"'
+Block start not matched
+Block end not matched
+Processing line: '"event.idm.read_only_udm.principal.hostname" => "%{COMPUTERNAME}"'
+Block start not matched
+Block end not matched
+Processing line: '"event.idm.read_only_udm.metadata.description" => "%{CONTENT}"'
+Block start not matched
+Block end not matched
+Processing line: '"event.idm.read_only_udm.network.application_protocol_version" => "%{CONNTYPE}"'
+Block start not matched
+Block end not matched
+Processing line: '"event.idm.read_only_udm.metadata.event_type" => "GENERIC_EVENT"'
+Block start not matched
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: 'on_error => "multiple_replace_error"'
+Block start matched: ('on_error', None)
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: 'mutate {'
+Block start matched: ('mutate', None)
+Block end not matched
+Processing line: 'merge => {'
+Block start matched: ('merge', None)
+Block end not matched
+Processing line: '"@output" => "event"'
+Block start not matched
+Block end not matched
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: '}'
+Block start not matched
+Block end matched: ()
+Processing line: '}'
+Block start not matched
+Block end matched: ()
 Variables:
-"test" = f1.filter0.mutate0.v1.4
-"test" = f1.mutate1.v2.10
-"source" = f1.json0.v3.15
-"source" = f1.json1.v4.20
-"tag" = f1.drop0.v5.26
-"output" = f1.mutate4.v9.45
-"@output" = f1.mutate5.v10.57
 
 UDM Fields:
-"output.principal.vendor_name" = f1.mutate2.v6.32
-"event.idm.read_only_udm.principal.product_name" = f1.mutate2.v7.33
-"output.principal.event_type" = f1.mutate3.v8.39
+"event.idm.read_only_udm.principal.user.userid" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.replace1.None16.52
+"src_ip_temp" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.replace2.None17.60
+"src_ip_temp" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.convert0.None18.63
+"event.idm.read_only_udm.principal.ip" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.if2.mutate5.merge0.None19.71
+"event.idm.read_only_udm.metadata.product_name" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mutate6.replace3.None20.78
+"event.idm.read_only_udm.metadata.vendor_name" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mutate6.replace3.None21.79
+"event.idm.read_only_udm.target.hostname" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mutate6.replace3.None22.80
+"event.idm.read_only_udm.target.application" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mutate6.replace3.None23.81
+"event.idm.read_only_udm.target.file.full_path" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mutate6.replace3.None24.82
+"event.idm.read_only_udm.principal.hostname" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mutate6.replace3.None25.83
+"event.idm.read_only_udm.metadata.description" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mutate6.replace3.None26.84
+"event.idm.read_only_udm.network.application_protocol_version" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mutate6.replace3.None27.85
+"event.idm.read_only_udm.metadata.event_type" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mutate6.replace3.None28.86
 
 Full Output:
 "filter" = f1.filter0.f1.1
-"mutate" = f1.filter0.mutate0.m1.2
-"replace" = f1.filter0.mutate0.r1.3
-"mutate" = f1.mutate1.m2.8
-"replace" = f1.mutate1.r2.9
-"json" = f1.json0.j1.14
-"on_error" = f1.json0.err1.16
-"json" = f1.json1.j2.19
-"on_error" = f1.json1.err2.21
-"if" = f1.c1.24
-"drop" = f1.drop0.dr1.25
-"mutate" = f1.mutate2.m3.30
-"replace" = f1.mutate2.r3.31
-"mutate" = f1.mutate3.m4.37
-"replace" = f1.mutate3.r4.38
-"mutate" = f1.mutate4.m5.43
-"rename" = f1.mutate4.rn1.44
-"statedump" = f1.statedump0.sd1.51
-"label" = f1.statedump0.l1.52
-"mutate" = f1.mutate5.m6.55
-"merge" = f1.mutate5.mr1.56
+"mutate" = f1.filter0.mutate0.mu1.2
+"replace" = f1.filter0.mutate0.replace0.r1.3
+"WHEN" = f1.filter0.mutate0.replace0.None1.4
+"SRCLOG" = f1.filter0.mutate0.replace0.None2.5
+"TIPOLOG" = f1.filter0.mutate0.replace0.None3.6
+"USERNAME" = f1.filter0.mutate0.replace0.None4.7
+"SRCLOGIP" = f1.filter0.mutate0.replace0.None5.8
+"COMPUTERNAME" = f1.filter0.mutate0.replace0.None6.9
+"APPLICATION" = f1.filter0.mutate0.replace0.None7.10
+"CATEGORY" = f1.filter0.mutate0.replace0.None8.11
+"CONTENT" = f1.filter0.mutate0.replace0.None9.12
+"CONNTYPE" = f1.filter0.mutate0.replace0.None10.13
+"RESOURCE" = f1.filter0.mutate0.replace0.None11.14
+"ACTION" = f1.filter0.mutate0.replace0.None12.15
+"grok" = f1.filter0.grok0.gr1.20
+"match" = f1.filter0.grok0.match0.ma1.21
+"message" = f1.filter0.grok0.match0.None13.22
+"(<\d+>)?%{SYSLOGTIMESTAMP:WHEN} %{SYSLOGHOST:SRCLOG} %{DATA}: %{GREEDYDATA:TIPOLOG} log: Users: %{USERNAME:USERNAME}, Source IP: %{GREEDYDATA:SRCLOGIP}, Computer name: %{GREEDYDATA:COMPUTERNAME}, Connection type: %{DATA:CONNTYPE}, Accessed resources: %{DATA:RESOURCE}, Action: %{GREEDYDATA:ACTION}" = f1.filter0.grok0.match0.None14.23
+"overwrite" = f1.filter0.grok0.overwrite0.ow1.25
+"on_error" = f1.filter0.grok0.overwrite0.on_error0.err1.26
+"if" = f1.filter0.grok0.overwrite0.if0.c1.30
+"date" = f1.filter0.grok0.overwrite0.if0.date0.dt1.31
+"match" = f1.filter0.grok0.overwrite0.if0.date0.match1.ma2.32
+"rebase" = f1.filter0.grok0.overwrite0.if0.date0.match1.rebase0.rb1.33
+"mutate" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.mu2.37
+"rename" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.rename0.rn1.38
+"WHEN" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.rename0.None15.39
+"on_error" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.on_error1.err2.41
+"if" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.c2.45
+"mutate" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate2.mu3.46
+"lowercase" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate2.lowercase0.lwc1.47
+"mutate" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mu4.50
+"replace" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.replace1.r2.51
+"on_error" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.on_error2.err3.54
+"mutate" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mu5.58
+"replace" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.replace2.r3.59
+"convert" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.convert0.cv1.62
+"on_error" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.on_error3.err4.65
+"if" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.if2.c3.68
+"mutate" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.if2.mutate5.mu6.69
+"merge" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.if2.mutate5.merge0.mr1.70
+"mutate" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mutate6.mu7.76
+"replace" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mutate6.replace3.r4.77
+"on_error" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mutate6.on_error4.err5.88
+"mutate" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mutate6.mutate7.mu8.92
+"merge" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mutate6.mutate7.merge1.mr2.93
+"@output" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.mutate4.mutate6.mutate7.merge1.None29.94
 
-Nesting Levels: 1
+Nesting Levels: 10
