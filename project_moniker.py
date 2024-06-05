@@ -1,10 +1,17 @@
 import re
 import argparse
 
-# Define a function to parse a Logstash configuration file.
+# Defines a function to parse a Logstash configuration file.
 def parse_logstash_config(file_location, output_structure=0, debug_enabled=True):
-    # Initialize variables to store parsing results.
+    # Initialize variables to storeresults.
+    _count = [0] #DEBUG TOOL REMOVE THIS
+    output_lines = []
+    variable_output_lines = []
+    udm_fields = []
+    context_stack = []
     variable_labels = {}
+    variables = set()
+    nesting_level = [1]
     
     # Initialize command_count with all possible keywords
     command_count = {
@@ -32,7 +39,9 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
         'rebase': 0,
         'lowercase': 0,
         'event.idm.read_only_udm.': 0,
-        'udm': 0
+        'ruby': 0,
+        'add': 0,
+        'udm': 0,
     }
     
     # Define mapping for keywords and a list of UDM keywords.
@@ -42,7 +51,9 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
         "mutate": "mu",
         "replace": "r",
         "rename": "rn",
+        "ruby": "rb",
         "json": "j",
+        "add": "ad",
         "grok": "gr",
         "on_error": "err",
         "kv": "kv",
@@ -60,17 +71,13 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
         "overwrite": "ow",
         "rebase": "rb",
         "lowercase": "lwc",
-        "event.idm.read_only_udm.": "udm"
+        "event.idm.read_only_udm.": "udm",
+        "el": "el"
+        
     }
     
+    #All the major Chronicle UDM categories that can be present
     udm_keywords = ["principal", "intermediary", "observer", "target", "src", "network", "security_result", "metadata"]
-
-    _count = [0]
-    output_lines = []
-    variable_output_lines = []
-    udm_fields = []
-    context_stack = []
-    nesting_level = [1]
 
     # Open and read the Logstash configuration file.
     with open(file_location, 'r') as file:
@@ -90,7 +97,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
     
     # Define a function to process each line.
     def process_line(line, line_number, udm_keywords, context_stack):
-        _count[0] += 1
+        _count[0] += 1 #DEBUG TOOL REMOVE THIS
         # Remove blank space from the beginning of string       
         line = line.strip()
         # ignore commented lines
@@ -112,7 +119,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
         ## keyword: The current keyword being processed (e.g., "filter", "mutate")
         ## context_stack: A list that maintains the current context or nesting levels as the configuration file is parsed.
         ## block_start_match.group(1):Sample group output it's refrencing; ('mutate', None)
-        block_start_match = re.match(r'^\s*([A-Za-z]+).*\{', line)
+        block_start_match = re.match(r'^\s*([A-Za-z]+).*\{$|.*\{$', line)
         if block_start_match:
             keyword = block_start_match.group(1) # sample of group data ('mutate', None)
             context_stack.append(keyword)
@@ -121,8 +128,9 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
                 command_count[keyword] += 1
                 nesting_level[0] += 1
         
-        block_end_match = re.match(r'^\s*\}', line)  
+        block_end_match = re.match(r'^\s*\}$|^(\w+)\}$|.*\}$', line)  
         if block_end_match:
+            print(f"{_count} Block end matched: {block_end_match.groups()}")
             if context_stack:
                 context_stack.pop()
                 nesting_level[0] -= 1
@@ -132,8 +140,8 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
         print(f"Processing line: '{line}'")
         if block_start_match:
             print(f"{_count} Block start matched: {block_start_match.groups()}")
-        # else:
-        #     print("Block start not matched")
+        else:
+            print("Block start not matched")
 
         if block_end_match:
             print(f"{_count} Block end matched: {block_end_match.groups()}")
@@ -142,7 +150,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
         ############################################################################
 
         # This portion is going to check the matches and verify
-        # pull apart the values that don't map to keyword_mapping
+        # the values that don't map to keyword_mapping
         # so that they can be checked as declared variables
         keyword_match = re.match(r'^\s*("[^"]+"|\w+)', line)
         if keyword_match:
@@ -150,9 +158,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
             original_keyword = keyword
             keyword_mapped = keyword_mapping.get(keyword)
 
-            ##THIS PART IS MESSING UP YOUR UDM INFO FOR NOW
             if keyword_mapped is None:
-                # If it's a UDM field, process it separately
                 if any(udm_keyword in original_keyword for udm_keyword in udm_keywords):
                     current_context = get_variable_context('udm', context_stack)
                     if debug_enabled:
@@ -163,9 +169,9 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
                         output_line = f'"{original_keyword}" = {current_context}.{line_number}'
 
                     udm_fields.append(output_line)
-                    return
                 else:
-                    return  # Skip processing if keyword is not found in mapping and not a UDM field
+                    variables.add(original_keyword)
+                return  # Skip processing if keyword is not found in mapping and not a UDM field
 
             if keyword_mapped not in command_count:
                 command_count[keyword_mapped] = 1
@@ -191,19 +197,22 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
             if any(udm_keywords in original_keyword for udm_keywords in udm_keywords):
                 udm_fields.append(output_line)
             else:
-                if keyword_mapped == 'udm':
-                    variable_output_lines.append(output_line)
+                print(f"keyword mapped: {keyword_mapped}")
+                if keyword_mapped == "None":
+                    variable_output_lines.append(original_keyword)
                 else:
                     output_lines.append(output_line)
-                    variable_output_lines.append(output_line)
+                    # variable_output_lines.append(output_line)
    
     # Process each line in the configuration file.
     for line_number, line in enumerate(lines, start=1):
         process_line(line, line_number, udm_keywords, context_stack)
 
+
+    print(f"variable output lines{variable_output_lines}")
     # Sort the output if requested.
     if output_structure == 1:
-        variable_output_lines.sort()
+        variable_output_lines.sort(variables)  # Sort the variables
         udm_fields.sort()
         output_lines.sort()
 
