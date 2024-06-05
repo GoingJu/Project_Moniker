@@ -135,19 +135,6 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
                 context_stack.pop()
                 nesting_level[0] -= 1
             return 
-        
-        # Debugging prints#########################################################
-        print(f"Processing line: '{line}'")
-        if block_start_match:
-            print(f"{_count} Block start matched: {block_start_match.groups()}")
-        else:
-            print("Block start not matched")
-
-        if block_end_match:
-            print(f"{_count} Block end matched: {block_end_match.groups()}")
-        # else:
-        #     print("Block end not matched")
-        ############################################################################
 
         # This portion is going to check the matches and verify
         # the values that don't map to keyword_mapping
