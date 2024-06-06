@@ -1,27 +1,75 @@
-UDM Fields:
-"principal.vendor_name" = f1.mu3.r3.33
-"principal.product_name" = f1.mu3.r3.34
-"principal.event_type" = f1.mu4.r4.39
+Variables:
+WHEN (2 times)
+SRCLOG (1 times)
+TIPOLOG (1 times)
+USERNAME (1 times)
+SRCLOGIP (1 times)
+COMPUTERNAME (1 times)
+APPLICATION (1 times)
+CATEGORY (1 times)
+CONTENT (1 times)
+CONNTYPE (1 times)
+RESOURCE (1 times)
+ACTION (1 times)
+message (1 times)
+(<\d+>)?%{SYSLOGTIMESTAMP:WHEN} %{SYSLOGHOST:SRCLOG} %{DATA}: %{GREEDYDATA:TIPOLOG} log: Users: %{USERNAME:USERNAME}, Source_IP: %{GREEDYDATA:SRCLOGIP}, Computer name: %{GREEDYDATA:COMPUTERNAME}, Connection type: %{DATA:CONNTYPE}, Accessed resources: %{DATA:RESOURCE}, Action: %{GREEDYDATA:ACTION} (1 times)
+overwrite (1 times)
+source_ip_temp (2 times)
 
-Full Output:
+UDM Fields:
+"principal.user.userid" = f1.mu4.r2.52
+"principal.ip" = f1.c3.mu6.mr1.71
+"metadata.product_name" = f1.mu7.r4.78
+"metadata.vendor_name" = f1.mu7.r4.79
+"target.hostname" = f1.mu7.r4.80
+"target.application" = f1.mu7.r4.81
+"target.file.full_path" = f1.mu7.r4.82
+"principal.hostname" = f1.mu7.r4.83
+"metadata.description" = f1.mu7.r4.84
+"network.application_protocol_version" = f1.mu7.r4.85
+"metadata.event_type" = f1.mu7.r4.86
+
+All Actions:
 "filter" = f1.1
 "mutate" = f1.mu1.2
 "replace" = f1.mu1.r1.3
-"mutate" = f1.mu2.8
-"replace" = f1.mu2.r2.9
-"json" = f1.j1.15
-"on_error" = f1.j1.17
-"json" = f1.j2.20
-"on_error" = f1.j2.22
-"if" = f1.c1.25
-"drop" = f1.c1.dr1.26
-"mutate" = f1.mu3.31
-"replace" = f1.mu3.r3.32
-"mutate" = f1.mu4.37
-"replace" = f1.mu4.r4.38
-"mutate" = f1.mu5.42
-"rename" = f1.mu5.rn1.43
-"mutate" = f1.mu6.49
-"merge" = f1.mu6.mr1.50
-
-Nesting Levels: 1
+"grok" = f1.gr1.20
+"match" = f1.gr1.ma1.21
+"on_error" = f1.gr1.26
+"if" = f1.c1.30
+"date" = f1.c1.dt1.31
+"match" = f1.c1.dt1.32
+"rebase" = f1.c1.dt1.33
+"mutate" = f1.mu2.37
+"rename" = f1.mu2.rn1.38
+"on_error" = f1.mu2.41
+"if" = f1.c2.45
+"mutate" = f1.c2.mu3.46
+"lowercase" = f1.c2.mu3.47
+"mutate" = f1.mu4.50
+"replace" = f1.mu4.r2.51
+"on_error" = f1.mu4.54
+"mutate" = f1.mu5.58
+"replace" = f1.mu5.r3.59
+"convert" = f1.mu5.cv1.62
+"on_error" = f1.mu5.65
+"if" = f1.c3.68
+"mutate" = f1.c3.mu6.69
+"merge" = f1.c3.mu6.mr1.70
+"mutate" = f1.mu7.76
+"replace" = f1.mu7.r4.77
+"on_error" = f1.mu7.88
+"mutate" = f1.mu8.92
+"merge" = f1.mu8.mr2.93
+"@output" = f1.mu8.mr2.94
+"principal.user.userid" = f1.mu4.r2.52
+"principal.ip" = f1.c3.mu6.mr1.71
+"metadata.product_name" = f1.mu7.r4.78
+"metadata.vendor_name" = f1.mu7.r4.79
+"target.hostname" = f1.mu7.r4.80
+"target.application" = f1.mu7.r4.81
+"target.file.full_path" = f1.mu7.r4.82
+"principal.hostname" = f1.mu7.r4.83
+"metadata.description" = f1.mu7.r4.84
+"network.application_protocol_version" = f1.mu7.r4.85
+"metadata.event_type" = f1.mu7.r4.86
