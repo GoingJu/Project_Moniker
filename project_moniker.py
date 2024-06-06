@@ -3,90 +3,91 @@ import argparse
 
 # Defines a function to parse a Logstash configuration file.
 def parse_logstash_config(file_location, output_structure=0, debug_enabled=True):
-    # Initialize variables to store results.
-    _count = [0] #DEBUG TOOL REMOVE THIS
+    # Initialize variables to storeresults.
+    _count = [0] #<DEBUG>
     output_lines = []
-    variable_output_lines = {}
+    variable_output_lines = []
     udm_fields = []
     context_stack = []
     variable_labels = {}
-    variables = {}
+    variables = set()
     nesting_level = [1]
     
     # Initialize command_count with all possible keywords
     command_count = {
-        'filter': 0,  
-        'mutate': 0,
+        '@output': 0,
+        'add': 0,
+        'add_field': 0,
         'array_function': 0,
-        'replace': 0,
-        'rename': 0,
-        'json': 0,
-        'on_error': 0,
-        'kv': 0,
-        'else': 0,
-        'grok': 0,
-        'label': 0,
-        'drop': 0,
-        'if': 0,
-        'date': 0,
-        'csv': 0,
-        'useragent': 0,
-        'statedump': 0,
-        'merge': 0,
-        'match': 0,
         'convert': 0,
+        'csv': 0,
+        'date': 0,
+        'drop': 0,
+        'else': 0,
+        'event.idm.read_only_udm.': 0,
+        'filter': 0,
+        'grok': 0,
+        'if': 0,
+        'json': 0,
+        'kv': 0,
+        'label': 0,
+        'lowercase': 0,
+        'match': 0,
+        'merge': 0,
+        'mutate': 0,
+        'on_error': 0,
         'overwrite': 0,
         'rebase': 0,
-        'lowercase': 0,
-        'event.idm.read_only_udm.': 0,
+        'rename': 0,
+        'replace': 0,
         'ruby': 0,
-        'add': 0,
+        'statedump': 0,
         'udm': 0,
-        "add_field": 0
+        'useragent': 0
     }
-    
     # Define mapping for keywords and a list of UDM keywords.
     keyword_mapping = {
-        "array_function": "ar",
-        "filter": "f",
-        "mutate": "mu",
-        "replace": "r",
-        "rename": "rn",
-        "ruby": "rb",
-        "json": "j",
+        "@output": "end",
         "add": "ad",
-        "grok": "gr",
-        "on_error": "err",
-        "kv": "kv",
-        "else": "el",
-        "label": "l",
-        "drop": "dr",
-        "if": "c",
-        "date": "dt",
-        "csv": "csv",
-        "useragent": "ua",
-        "statedump": "sd",
-        "merge": "mr",
-        "match": "ma",
+        "add_field": "af",
+        "array_function": "ar",
         "convert": "cv",
-        "overwrite": "ow",
-        "rebase": "rb",
-        "lowercase": "lwc",
-        "event.idm.read_only_udm.": "udm",
+        "csv": "csv",
+        "date": "dt",
+        "drop": "dr",
+        "else": "el",
         "el": "el",
-        "add_field": "af"
-        
-    }
-    
-    # All the major Chronicle UDM categories that can be present
-    udm_keywords = ["principal", "intermediary", "observer", "target", "src", "network", "security_result", "metadata"]
+        "event.idm.read_only_udm.": "udm",
+        "filter": "f",
+        "grok": "gr",
+        "if": "c",
+        "json": "j",
+        "kv": "kv",
+        "label": "l",
+        "lowercase": "lwc",
+        "match": "ma",
+        "merge": "mr",
+        "mutate": "mu",
+        "on_error": "err",
+        "rebase": "rb",
+        "rename": "rn",
+        "replace": "r",
+        "ruby": "rb",
+        "statedump": "sd",
+        "useragent": "ua"
+    }   
+    #All the major Chronicle UDM categories that can be present
+    udm_keywords = ["action", "category", "id", "intermediary", "metadata", "network", "observer", "principal", "security_result", "src", "target"]
 
     # Open and read the Logstash configuration file.
     with open(file_location, 'r') as file:
         lines = file.readlines()
 
+    # #Explanation for def get_variable_context
+    # 1) Checking the context stack:
+    # 2) Generating the context string when the stack is not empty:
     def get_variable_context(keyword, context_stack):
-        print(f"context stack: {keyword}") #DEBUG COMMENT OUT
+        #print(f"context stack: {keyword}")##DEBUG COMMENT OUT
         if context_stack:
             context_parts = []
             for ctx in context_stack:
@@ -116,7 +117,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
         # Check if the line contains a block start or end   
         block_start_match = re.match(r'^\s*([\w\[\]]+).*\{$|.*\{$', line)
         if block_start_match:
-            keyword = block_start_match.group(1)
+            keyword = block_start_match.group(1) # sample of group data ('mutate', None)
             context_stack.append(keyword)
         
             if keyword in keyword_mapping:
@@ -125,23 +126,24 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
         
         block_end_match = re.match(r'^\s*\}$|^(\w+)\}$|.*\}$', line)  
         if block_end_match:
-            print(f"{_count} Block end matched: {block_end_match.groups()}")
+            #print(f"{_count} Block end matched: {block_end_match.groups()}")
             if context_stack:
                 context_stack.pop()
                 nesting_level[0] -= 1
             return 
         
-        # Debugging prints
-        print(f"Processing line: '{line}'")
-        if block_start_match:
-            print(f"{_count} Block start matched: {block_start_match.groups()}")
-        else:
-            print("Block start not matched")
+        # # Debugging prints#########################################################
+        # print(f"Processing line: '{line}'")
+        # if block_start_match:
+        #     print(f"{_count} Block start matched: {block_start_match.groups()}")
+        # else:
+        #     print("Block start not matched")
 
-        if block_end_match:
-            print(f"{_count} Block end matched: {block_end_match.groups()}")
+        # if block_end_match:
+        #     print(f"{_count} Block end matched: {block_end_match.groups()}")
         # else:
         #     print("Block end not matched")
+        # ############################################################################
 
         # This portion is going to check the matches and verify
         # the values that don't map to keyword_mapping
@@ -151,7 +153,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
         if keyword_match:
             keyword = keyword_match.group(1).strip('"')
             if variable_match:  # Check if variable_match is not None
-                variable = variable_match.group(1).strip('"')
+                variable = variable_match.group(1)
             else:
                 variable = None
             original_keyword = keyword
@@ -169,7 +171,7 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
 
                     udm_fields.append(output_line)
                 else:
-                    variables.append(original_keyword)
+                    variables.add(original_keyword)
                 return  # Skip processing if keyword is not found in mapping and not a UDM field
 
             if keyword_mapped not in command_count:
@@ -198,42 +200,45 @@ def parse_logstash_config(file_location, output_structure=0, debug_enabled=True)
             
             # Add the variable and its context to variable_output_lines
             if variable and variable not in variable_labels:
-                variable_output_lines[variable] = current_context
-
+                variable_output_lines[variable] = current_context   
+   
     # Process each line in the configuration file.
     for line_number, line in enumerate(lines, start=1):
         process_line(line, line_number, udm_keywords, context_stack)
 
     # Sort the output if requested.
     if output_structure == 1:
-        sorted_variable_output_lines = sorted(variable_output_lines.items())
-        variable_output_lines = {k: v for k, v in sorted_variable_output_lines}
-        udm_fields.sort()
-        output_lines.sort()
+        sorted_variables = sorted(variables)
+        variable_output_lines = ["Variables:"] + [f"{variable}" for variable in sorted_variables]
+    else:
+        variable_output_lines = [f"Variables: {variable}" for variable in variables]
+        variable_output_lines.insert(0, "Variables:")
 
-    # Organize and format the output.
-    variable_output_lines_list = [f"{variable}: {context}" for variable, context in variable_output_lines.items()]
-    variable_output_lines_list.insert(0, "Variables:")
-    variable_output_lines_list.append("")  # Add a blank line at the end of the variable list
+    # # Organize and format the output.
+    variable_output_lines = [f"{variable}" for variable in variables]
+    variable_output_lines.insert(0, "")
+    variable_output_lines.insert(1, "Variables:")
 
-    udm_fields.insert(0, "UDM Fields:")
+    #print(f"variable output lines{variable_output_lines}") #<DEBUG-REMOVE>
+
     udm_fields = [f"{line}" for line in udm_fields]
 
     output_lines.insert(0, "Full Output:")
-    output_lines = [f"{line}" for line in output_lines]
+    output_lines = [f"{line}" for line in output_lines + udm_fields]
 
+    udm_fields.insert(0, "UDM Fields:")
     udm_fields.append("")  # Add a blank line between UDM Fields and Full Output
-    variable_output_lines_list.append("")  # Add a blank line at the end of the variable list
+    variable_output_lines.append("")  # Add a blank line at the end of the variable list
 
     # Include a page break (blank line) before the nesting level.
-    output_lines.append("")  # This adds a blank line
+    output_lines.append("")
 
     # Include nesting level count.
     nesting_count_line = f"Nesting Levels: {nesting_level[0]}"
     output_lines.append(nesting_count_line)
 
     # Print the results.
-    print('\n'.join(variable_output_lines_list + udm_fields + output_lines))
+    print('\n'.join(variable_output_lines + udm_fields + output_lines))
 
 if __name__ == "__main__":
     # Set up command-line argument parsing.
