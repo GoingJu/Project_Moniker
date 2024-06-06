@@ -40,9 +40,6 @@ Example of registry information:
       v1:    Is the 1st reported variable found in the file.
       5:     Was found on the 5th line of the file
 
-  Sample output of current version:
-  
-      "on_error" = f1.filter0.grok0.overwrite0.if0.date0.mutate1.if1.mutate3.on_error2.err3.54
       
 Change History:
 
