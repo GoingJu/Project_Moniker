@@ -1,5 +1,5 @@
 # project_moniker
-2023
+2024
 
 Project Moniker is intended to be a python application that will parse each line in a Google Chronicle configuration file and map values contained within to a registry number. The registry number format will follow the indexes of the configuration files so that it provides clarity at a glance, as well as information on how the file is structured. The intent of this data will be; to use it for scanning and modifying large repositories of configuration files, to aid in the implementation standardized parser structure, and to be used as an adjuct tool for parser development/debugging/documentation.
 
